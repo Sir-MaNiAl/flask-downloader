@@ -28,7 +28,7 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    os.makedirs(app.config['UPLOAD_ROOT_DIR'], exist_ok=True)
+    # os.makedirs(app.config['UPLOAD_ROOT_DIR'], exist_ok=True)
 
     from . import db
     db.init_app(app)

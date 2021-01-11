@@ -10,6 +10,7 @@ webargs = "*"
 psycopg2 = "*"
 celery = {extras = ["redis"], version = "*"}
 requests = "*"
+gunicorn = "*"
 
 [dev-packages]
 pylint = "*"

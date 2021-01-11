@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4f079b975fda1f0b1fc8befdf6a8fbbe1ea9b96f7a5b2d8c943d0f4edae905bc"
+            "sha256": "042200246bb66232adbac127c53aa21af7022fcb51bf553c3cb7bae51f5b9c17"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -93,6 +93,14 @@
             "index": "pypi",
             "version": "==1.1.2"
         },
+        "gunicorn": {
+            "hashes": [
+                "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626",
+                "sha256:cd4a810dd51bf497552cf3f863b575dabd73d6ad6a91075b65936b151cbf4f9c"
+            ],
+            "index": "pypi",
+            "version": "==20.0.4"
+        },
         "idna": {
             "hashes": [
                 "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6",
@@ -174,11 +182,11 @@
         },
         "prompt-toolkit": {
             "hashes": [
-                "sha256:45b154489d89dc41cce86a069a65f3886206518e7ca93fa9d7dad70546c78d54",
-                "sha256:c5eeab58dd31b541442825d7870777f2a2f764eb5fda03334d5219cd84b9722f"
+                "sha256:ac329c69bd8564cb491940511957312c7b8959bb5b3cf3582b406068a51d5bb7",
+                "sha256:b8b3d0bde65da350290c46a8f54f336b3cbf5464a4ac11239668d986852e79d5"
             ],
             "markers": "python_full_version >= '3.6.1'",
-            "version": "==3.0.9"
+            "version": "==3.0.10"
         },
         "psycopg2": {
             "hashes": [
