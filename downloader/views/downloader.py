@@ -3,9 +3,6 @@ from datetime import timezone
 
 from flask import Blueprint, abort, make_response, redirect, current_app
 from marshmallow import validate
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import aliased
-from sqlalchemy.sql.expression import not_, or_, and_
 from werkzeug.exceptions import default_exceptions
 from webargs import fields
 from webargs.flaskparser import use_args, parser
@@ -41,6 +38,7 @@ def files_download(args):
 @bp.route('/files', methods=['GET'])
 @use_args(
     {
+        # NB: Верхняя граница взята с потолка
         'per_page':
             fields.Int(missing=20, validation=validate.Range(min=1, max=1000)),
         'show_after_id':
@@ -51,42 +49,7 @@ def files_download(args):
 def files_list(args):
     per_page = args['per_page']
     show_after_id = args['show_after_id']
-    # NB: Сортировка по-умолчанию: по-возрастанию дата, по-возрастанию время
-    # скачивания, NULL значения (время скачивания) последними.
-    # Предполагаю что строк в бд будет много, потому пагинация не по оффсету,
-    # а по id.
-    # pylint: disable=no-member
-    query = File.query.order_by(File.added_at, File.download_time, File.id)
-    if show_after_id:
-        # pylint: disable=no-member
-        # yapf: disable
-        stmt = File.query.with_entities(File.id,
-                                        File.added_at,
-                                        File.download_time) \
-                   .filter_by(id=show_after_id) \
-                   .subquery('last_seen_file')
-        # yapf: enable
-        last_seen_file = aliased(File, stmt)
-        # NB: Фильтр работает только с сортировкой по-умолчанию.
-        _added_later = File.added_at > last_seen_file.added_at
-        _added_same_date = File.added_at == last_seen_file.added_at
-        _loaded_slower = File.download_time > last_seen_file.download_time
-        _same_date_slower = _added_same_date & _loaded_slower
-        _loaded_same_time = File.download_time == last_seen_file.download_time
-        # yapf: disable
-        _same_date_same_downloadtime_next_ids = (
-            _added_same_date &
-            (_loaded_same_time | File.download_time.is_(None)) &
-            (File.id > last_seen_file.id))
-        # yapf: enable
-        # yapf: disable
-        query = query.filter(
-            _added_later |
-            _same_date_slower |
-            _same_date_same_downloadtime_next_ids)
-        # yapf: enable
-
-    files = query.limit(per_page).all()
+    files = File.get_page(last_id=show_after_id, per_page=per_page)
     return {'files': [file_as_json(f) for f in files]}
 
 
