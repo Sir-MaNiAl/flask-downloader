@@ -1,0 +1,64 @@
+services:
+  downloader-web:
+    image: manial/flask-downloader:latest
+    ports:
+      - "8000:8000"
+    environment:
+      FILE_DOWNLOADER_CELERY_BROKER_URL: amqp://test:test@downloader-rabbitmq:5672/test
+      FILE_DOWNLOADER_CELERY_RESULT_BACKEND: redis://downloader-redis:6379
+      FILE_DOWNLOADER_DATABASE_ECHO:
+      FILE_DOWNLOADER_DATABASE_URL: postgresql://test:test@downloader-postgres:5432/test
+      FILE_DOWNLOADER_SECRET_KEY: dev
+      FILE_DOWNLOADER_UPLOAD_ROOT_DIR: /app/upload/
+      SQL_HOST: downloader-postgres
+      SQL_PORT: 5432
+      FLASK_ENV: development
+    depends_on:
+      - "downloader-postgres"
+      - "downloader-rabbitmq"
+      - "downloader-redis"
+
+  downloader-celery-worker:
+    image: manial/flask-downloader:latest
+    volumes:
+      - "./upload/:/app/upload/"
+    environment:
+      FILE_DOWNLOADER_CELERY_BROKER_URL: amqp://test:test@downloader-rabbitmq:5672/test
+      FILE_DOWNLOADER_CELERY_RESULT_BACKEND: redis://downloader-redis:6379
+      FILE_DOWNLOADER_DATABASE_ECHO:
+      FILE_DOWNLOADER_DATABASE_URL: postgresql://test:test@downloader-postgres:5432/test
+      FILE_DOWNLOADER_SECRET_KEY: dev
+      FILE_DOWNLOADER_UPLOAD_ROOT_DIR: /app/upload/
+      SQL_HOST: downloader-postgres
+      SQL_PORT: 5432
+      FLASK_ENV: development
+    command: ["celery", "--app=downloader.celery_worker.celery", "worker", "--autoscale=10,3"]
+    depends_on:
+      - "downloader-postgres"
+      - "downloader-rabbitmq"
+      - "downloader-redis"
+
+  downloader-postgres:
+    image: postgres:alpine
+    hostname: downloader-postgres
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_USER: test
+      POSTGRES_DB: test
+    shm_size: 256MB
+
+  downloader-rabbitmq:
+    image: rabbitmq:alpine
+    hostname: downloader-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: test
+      RABBITMQ_DEFAULT_PASS: test
+      RABBITMQ_DEFAULT_VHOST: test
+
+  downloader-redis:
+    image: redis:alpine
+
+volumes:
+  db_data: {}
