@@ -1,0 +1,22 @@
+# IDE stuff:
+.vscode/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask stuff:
+instance/
+
+# Development stuff:
+dev_helpers/
+upload/
+
+# Environments
+.env
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

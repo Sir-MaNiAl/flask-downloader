@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+sqlalchemy = "*"
+webargs = "*"
+psycopg2 = "*"
+celery = {extras = ["redis"], version = "*"}
+requests = "*"
+
+[dev-packages]
+pylint = "*"
+pycodestyle = "*"
+jedi = "*"
+mypy = "*"
+yapf = "*"
+sqlalchemy-stubs = "*"
+
+[requires]
+python_version = "3.9"
