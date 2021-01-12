@@ -1,9 +1,11 @@
 REST API для приложения, которое загружает файлы на диск
 
 Стэк
-Flask, SQLAlchemy, PostgreSQL, очередь на выбор или
+Flask, SQLAlchemy, PostgreSQL, Celery(rabbitmq, redis)
 
-### Описание API в вольной форме (в разработке спецификация OpenAPI)
+---
+## Описание API в вольной форме
+(в разработке спецификация OpenAPI)
 
 ```
 objects:
@@ -15,7 +17,7 @@ objects:
          'size': <str>}  # Размер файла
 ```
 
-#### Поставить в очередь на закачку список URL
+### Поставить в очередь на закачку список URL
 ```
 POST /download
 json: {'url_list': [<str>]}
@@ -29,7 +31,7 @@ response:
            'errors': <request.data.validation_errors>}
 ```
 
-#### Просмотреть информацию о файлах постранично
+### Просмотреть информацию о файлах постранично
 ```
 GET /files
 json: {'per_page': <int=20, optional>,
@@ -44,7 +46,7 @@ response:
            'errors': <request.data.validation_errors>}
 ```
 
-#### Просмотреть информацию об одном файле
+### Просмотреть информацию об одном файле
 ```
 GET /file/<uuid:id>
 
@@ -53,7 +55,7 @@ response:
     json: <object:File> or {}
 ```
 
-#### Переименовать файл
+### Переименовать файл
 ```
 POST /file/<uuid:1d>
 json: {'name': <str>}
@@ -67,7 +69,7 @@ response:
            'errors': <request.data.validation_errors>}
 ```
 
-#### Удалить файл
+### Удалить файл
 ```
 DELETE /file/<uuid:id>
 
@@ -76,14 +78,17 @@ response:
     json: {}
 ```
 
-
-### Docker-compose
+---
+## Docker-compose
 В корне проекта лежит файл конфигурации docker-compose. Разворачивает сервер и слушает на 8000 порту. Без TLS, для него можно развернуть поверх контейнер с реверс-прокси, например nginx.
+
 Инфраструктура:
-    * web(gunicorn)
-    * celery
-    * rabbitmq
-    * redis
-    * postgresql
+* web(gunicorn)
+* celery
+* rabbitmq
+* redis
+* postgresql
+
 Ожидается монтирование директории ./upload в один из контейнеров с правами на запись и просмотр содержимого.
+
 Все образы тянутся с hub.docker.com.
